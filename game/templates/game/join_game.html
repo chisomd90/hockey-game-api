@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Join Game</title>
+</head>
+<body>
+	<div>
+		<input type="text" name="game_id" class="game-id-input">
+		<input type="submit" name="submit" class="game-id-submit" value="Submit">
+	</div>
+
+	<script type="text/javascript">
+		document.querySelector('.game-id-input').focus();
+		document.querySelector('.game-id-input').onkeyup = function(e) {
+            if (e.keyCode === 13) {  // enter, return
+                document.querySelector('.game-id-submit').click();
+            }
+        };
+        document.querySelector('.game-id-submit').onclick = function(e) {
+            var roomName = document.querySelector('.game-id-input').value;
+            window.location.pathname = '/play-game/' + roomName + '/';
+        };
+	</script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Play Game</title>
+	<style type="text/css">
+		.display-game {
+			width: 90%;
+			margin: auto;
+			min-height: 400px;
+			border: 2px solid grey;
+			border-radius: 5px;
+		}
+	</style>
+</head>
+<body>
+	<div class="display-game"></div>
+	<div>
+		<div>
+			<label>Ball Position X</label><br>
+			<input type="text" name="ball-position-x" class="ball-position-x">
+		</div>
+		<div>
+			<label>Ball Position Y</label><br>
+			<input type="text" name="ball-position-y" class="ball-position-y">
+		</div>
+		<div>
+			<label>Player 1 Position X</label><br>
+			<input type="text" name="player-1-position-x" class="player-1-position-x">
+		</div>
+		<div>
+			<label>Player 1 Position Y</label><br>
+			<input type="text" name="player-1-position-y" class="player-1-position-y">
+		</div>
+		<div>
+			<label>Player 2 Position X</label><br>
+			<input type="text" name="player-2-position-x" class="player-2-position-x">
+		</div>
+		<div>
+			<label>Player 2 Position Y</label><br>
+			<input type="text" name="player-2-position-y" class="player-2-position-y">
+		</div>
+		<div>
+			<label>Game Status</label><br>
+			<input type="text" name="game-status" class="game-status">
+		</div>
+		<div>
+			<label>Player 1 ID</label><br>
+			<input type="text" name="player-1-id" class="player-1-id">
+		</div>
+		<div>
+			<label>Player 1 Name</label><br>
+			<input type="text" name="player-1-name" class="player-1-name">
+		</div>
+		<div>
+			<label>Player 1 Score</label><br>
+			<input type="text" name="player-1-score" class="player-1-score">
+		</div>
+		<div>
+			<label>Player 2 ID</label><br>
+			<input type="text" name="player-2-id" class="player-2-id">
+		</div>
+		<div>
+			<label>Player 2 Name</label><br>
+			<input type="text" name="player-2-name" class="player-2-name">
+		</div>
+		<div>
+			<label>Player 2 Score</label><br>
+			<input type="text" name="player-2-score" class="player-2-score">
+		</div>
+		<div>
+			<label>Game Rule</label><br>
+			<input type="text" name="game-rule" class="game-rule">
+		</div>
+	</div>
+	<input type="submit" name="submit-game" class="submit-game" value="Submit Game">
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.js" integrity="sha512-SxQulwFs2B38bmUJtBSo9tD07MDrtCbY8me3AOZ14tRknCPTeMDLvCQV4ekhs8R0o9QPnW5HQanKfveexVcwLA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script type="text/javascript">
+		let loc = window.location;
+		let wsProtocol = loc.protocol == 'http:' ? 'ws://' : 'wss://';
+		const path = wsProtocol + loc.host + '/ws' + loc.pathname;
+		const gameSocket = new ReconnectingWebSocket(path);
+
+		gameSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data).data;
+            console.log(data);
+            const text_data = `
+            	<p>Ball Position X: ${data.events.ball_position.x}</p>
+            	<p>Ball Position Y: ${data.events.ball_position.x}</p>
+            	<p>Player 1 Position X: ${data.events.player_1_position.x}</p>
+            	<p>Player 1 Position Y: ${data.events.player_1_position.y}</p>
+            	<p>Player 2 Position X: ${data.events.player_2_position.x}</p>
+            	<p>Player 2 Position Y: ${data.events.player_2_position.y}</p>
+            	<p>Game Status: ${data.events.game_status}</p>
+            	<p>Player 1 ID: ${data.events.player_1.id}</p>
+            	<p>Player 1 Name: ${data.events.player_1.name}</p>
+            	<p>Player 1 Score: ${data.events.player_1.score}</p>
+            	<p>Player 2 ID: ${data.events.player_2.id}</p>
+            	<p>Player 2 Name: ${data.events.player_2.name}</p>
+            	<p>Player 2 Score: ${data.events.player_2.score}</p>
+            	<p>Game Rule: ${data.events.game_rule}</p>
+            	<br><br><br>
+            `;
+            document.querySelector('.display-game').innerHTML += text_data;
+        };
+        gameSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+        document.querySelector('.submit-game').onclick = function(e) {
+        	let response = {
+        		'events': {
+        			'ball_position': {
+        				'x': document.querySelector('.ball-position-x').value ? document.querySelector('.ball-position-x').value : 0,
+        				'y': document.querySelector('.ball-position-y').value ? document.querySelector('.ball-position-y').value : 0,
+        			},
+        			'player_1_position': {
+        				'x': document.querySelector('.player-1-position-x').value ? document.querySelector('.player-1-position-x').value : 0,
+        				'y': document.querySelector('.player-1-position-y').value ? document.querySelector('.player-1-position-y').value : 0,
+        			},
+        			'player_2_position': {
+        				'x': document.querySelector('.player-2-position-x').value ? document.querySelector('.player-2-position-x').value : 0,
+        				'y': document.querySelector('.player-2-position-y').value ? document.querySelector('.player-2-position-y').value : 0,
+        			},
+        			'game_status': document.querySelector('.game-status').value ? document.querySelector('.game-status').value : 'waiting',
+        			'player_1': {
+        				'id': document.querySelector('.player-1-id').value,
+        				'name': document.querySelector('.player-1-name').value,
+        				'score': document.querySelector('.player-1-score').value,
+        			},
+        			'player_2': {
+        				'id': document.querySelector('.player-2-id').value,
+        				'name': document.querySelector('.player-2-name').value,
+        				'score': document.querySelector('.player-2-score').value,
+        			},
+        			'game_rule': document.querySelector('.game-rule').value,
+        		}
+        	};
+        	gameSocket.send(JSON.stringify(response));
+        	document.querySelectorAll("input[type=text]").forEach(function(item) {
+        		item.value = '';
+        	})
+        }
+	</script>
+</body>
+</html>
