@@ -27,3 +27,4 @@ Twisted==23.8.0
 txaio==23.1.1
 typing_extensions
 zope.interface==6.1
+django-cors-headers
